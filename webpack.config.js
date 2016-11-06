@@ -1,11 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const BUILD_DIR = path.resolve(`${__dirname}/client/public`);
-const APP_DIR = path.resolve(`${__dirname}/client/public/app`);
+const BUILD_DIR = path.resolve(__dirname + '/client/public');
+const APP_DIR = path.resolve(__dirname + '/client/public/app');
 
 const config = {
-	entry: `${APP_DIR}/index.js`,
+	entry: APP_DIR + '/index.js',
 	output: {
 		path: BUILD_DIR,
 		filename: 'bundle.js',
@@ -19,7 +19,7 @@ const config = {
 				loader: 'babel-loader',
 				query: {
 					presets: ['react', 'es2015', 'react-hmre'],
-					plugins: ['transform-decorators-legacy', 'transform-class-properties']
+					plugins: ["transform-decorators-legacy", "transform-class-properties"]
 				}
 			},
 			{
@@ -41,6 +41,6 @@ const config = {
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.NoErrorsPlugin()
 	]
-}
+};
 
 module.exports = config;

@@ -1,11 +1,38 @@
 import React, { Component } from 'react';
+import { observer } from 'mobx-react';
 
+import Board from './board.js';
+import Input from './input.js';
+// import WordList from './word-list.js';
+import store from '../store/store.js';
+
+@observer
 export default class App extends Component {
-	// constructor(props) {
-	// 	super(props);
-		
-	// }
+
+  componentWillMount() {
+
+  }
+
+  handleChange = (value) => {
+    store.userInput = value;
+  }
+
+  handleSubmit = (value) => {
+    console.log(value);
+  }
+
 	render() {
-		return <h1> Here is the App </h1>
+    console.log(store.board);
+		return(
+      <div className="main">
+        <h1> Boggle! </h1>
+        <Board board={store.board} />
+        <Input
+          userInput={store.userInput}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
+      </div>
+    )
 	}
 }
