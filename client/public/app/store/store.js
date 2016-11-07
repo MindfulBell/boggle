@@ -22,13 +22,28 @@ class BoggleStore {
 	  	if ((i+1) % 4 === 0) {
 	  		neighbors = neighbors.filter(i => (i % 4 !== 0));
 	  	}
-  		return {letter: die[getRandom(0, 6)], neighbors}
+  		return {letter: die[getRandom(0, 6)], neighbors, active: false}
+  	})
+  }
+  checkBoardForInput(letter) {
+  	this.activeBoard.forEach(letterObj => {
+  		if (letterObj.letter === letter) {
+  			return true;
+  		}
+  		return false;
   	})
   }
   processInput(value) {
   	const userInput = this.userInput = value;
-  	if (userInput.length === 1) {
-  	}
+  	userInput.split(', ').forEach((letter, ind) => {
+  		// if (checkBoardForInput(letter)) {
+  		// 	if (ind === 0) {
+  		// 		this.activeBoard.forEach((letterObj) => {
+  		// 			if ()
+  		// 		})
+  		// 	}
+  		// }
+  	})
   }
 }
 
