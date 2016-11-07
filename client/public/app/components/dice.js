@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default ({value}) => {
-  return <div>{value}</div>
+export default ({value, neighbors}) => {
+  return <div className='letter'>{value}</div>
 }

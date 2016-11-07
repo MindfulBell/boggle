@@ -1,6 +1,26 @@
 .main {
+	text-align: center;
   h1 {
     color: orange;
+  }
+  .board {
+  	margin: 0 auto;
+  	display: flex;
+  	width: 250px;
+  	flex-wrap: wrap;
+  	.letter {
+  		box-sizing: border-box;
+  		width: 25%;
+  		background-color: tomato;
+  		border: 1px solid black;
+  		font-size: 2.7rem;
+  		text-align: center;
+  	}
+  }
+  input {
+  	margin-top: 25px;
+  	font-size: 2.7rem;
+  	width: 300px;
   }
 }
 

@@ -10,11 +10,11 @@ import store from '../store/store.js';
 export default class App extends Component {
 
   componentWillMount() {
-
+    store.getActiveBoard();
   }
 
   handleChange = (value) => {
-    store.userInput = value;
+    store.processInput(value);
   }
 
   handleSubmit = (value) => {
@@ -22,11 +22,11 @@ export default class App extends Component {
   }
 
 	render() {
-    console.log(store.board);
+    console.log(store.activeBoard);
 		return(
       <div className="main">
         <h1> Boggle! </h1>
-        <Board board={store.board} />
+        <Board board={store.activeBoard} />
         <Input
           userInput={store.userInput}
           handleChange={this.handleChange}
