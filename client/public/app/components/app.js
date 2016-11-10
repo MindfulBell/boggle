@@ -22,11 +22,10 @@ export default class App extends Component {
   }
 
 	render() {
-    console.log(store.activeBoard);
 		return(
       <div className="main">
         <h1> Boggle! </h1>
-        <Board board={store.activeBoard} />
+        <Board board={store.activeBoard} validWordIndeces={store.validWordIndeces}/>
         <Input
           userInput={store.userInput}
           handleChange={this.handleChange}

@@ -15,6 +15,7 @@ class BoggleStore {
   @observable activeBoard = [];
   @observable userInput = '';
   @observable priorIndex = null;
+  @observable validWordIndeces = [];
   getActiveBoard() {
   	this.activeBoard = this.possibleDice.map((die, i) => {
       const letter = die[getRandom(0, 6)];
@@ -26,42 +27,69 @@ class BoggleStore {
 	  		neighbors = neighbors.filter(i => (i % 4 !== 0));
 	  	}
 	  	this.justLetters.push(letter);
-  		return {letter, neighbors, active: false}
+  		return {letter, neighbors}
   	})
   }
-  setLetterActive(value) {
-    this.activeBoard = this.activeBoard.map((die, i) => {
-			if (value === die.letter) {
-				this.priorIndex = i;
-				return Object.assign(die, {active: true});
-			}
-			return die;
-		});
-  }
-  getCurrentIndex(value) {
-    return this.justLetters.map((letter, i) => {
+  // setLetterActive(value) {
+  //   this.activeBoard = this.activeBoard.map((die, i) => {
+		// 	if (value === die.letter) {
+		// 		this.priorIndex = i;
+		// 		return Object.assign(die, {active: true});
+		// 	}
+		// 	return die;
+		// });
+  // }
+  getCurrentIndeces(value) {
+    let indeces = [];
+    this.justLetters.forEach((letter, i) => {
       if (value === letter) {
-        return i;
+        indeces.push(i);
       }
-    })
+    });
+    return indeces;
+  }
+
+  checkNeighborsOfLetter(letter) {
+
   }
   // PROBLEM IS CURRENTINDECES CAN HOLD 2 INDEXES, MUST CHECK FOR BOTH! NOT JUST ONE!
   // HOW TO UNHIGHLIGHT ON BACKSPACE?! Maybe just make a userPassingWord value, any letter in there is highlighted, or even
   // fill it with indeces to highlight
   processInput(value) {
-  	const userInput = this.userInput = value.toUpperCase();
+    const userInput = this.userInput = value.toUpperCase();
     const currentLetter = userInput[userInput.length - 1];
-		if (this.justLetters.includes(currentLetter)) {
-      const currentIndeces = this.getCurrentIndex(currentLetter);
-			if (userInput.length === 1) {
-        this.setLetterActive(currentLetter);
-        return;
-			}
-			if (this.activeBoard[this.priorIndex].neighbors.includes(currentIndeces)) {
-        this.setLetterActive(currentLetter);
+    const currentIndeces = this.getCurrentIndeces(currentLetter);
+    if (this.justLetters.includes(currentLetter)) {
+      if (userInput.length === 1) {
+        this.validWordIndeces = [...currentIndeces];
         return;
       }
-		}
+      console.log(currentIndeces);
+      if (currentIndeces.length === 1) {
+
+        let newValidIndeces = [];
+        this.validWordIndeces.forEach((boardIndex, ind) => {
+          if (this.activeBoard[boardIndex].includes(currentIndeces[0])) {
+            newValidIndeces.push(currentIndeces[0]);
+          }
+          else {
+            this.validWordIndeces.splice(ind, 1);
+          }
+        });
+        this.validWordIndeces = [...validWordIndeces, ...newValidIndeces];
+      }
+    }
+		// if (this.justLetters.includes(currentLetter)) {
+     //  const currentIndeces = this.getCurrentIndex(currentLetter);
+		// 	if (userInput.length === 1) {
+     //    this.setLetterActive(currentLetter);
+     //    return;
+		// 	}
+		// 	if (this.activeBoard[this.priorIndex].neighbors.includes(currentIndeces)) {
+     //    this.setLetterActive(currentLetter);
+     //    return;
+     //  }
+		// }
 
     // press letter, if it is the first letter, give it active
     // if it is second or higher, check if it's index is in the neighbor array of prior element
