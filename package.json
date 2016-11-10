@@ -26,6 +26,7 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "mobx": "^2.6.1",
     "mobx-react": "^3.5.8",
     "react": "^15.3.2",
