@@ -16,8 +16,24 @@ class BoggleStore {
   @observable userInput = '';
   @observable priorIndex = null;
   @observable validWordIndeces = [];
+  rollTheDice() {
+    let numDice = 15;
+    let usedIndeces = [];
+    let rolledDice = [];
+    while (numDice >= 0) {
+      let randIndex;
+      do {
+        randIndex = getRandom(0, 15);
+      }
+      while (usedIndeces.includes(randIndex));
+      rolledDice.push(this.possibleDice[randIndex]);
+      usedIndeces.push(randIndex);
+      numDice--;
+    }
+    return rolledDice;
+  }
   getActiveBoard() {
-  	this.activeBoard = this.possibleDice.map((die, i) => {
+  	this.activeBoard = this.rollTheDice().map((die, i) => {
       const letter = die[getRandom(0, 6)];
   		let neighbors = [i-5, i-4, i-3, i-1, i+1, i+3, i+4, i+5].filter((i) => (i >=0 && i <= 15));
 	  	if (i % 4 === 0) {
@@ -27,73 +43,30 @@ class BoggleStore {
 	  		neighbors = neighbors.filter(i => (i % 4 !== 0));
 	  	}
 	  	this.justLetters.push(letter);
-  		return {letter, neighbors}
+  		return {letter, neighbors, active: false}
   	})
   }
-  // setLetterActive(value) {
-  //   this.activeBoard = this.activeBoard.map((die, i) => {
-		// 	if (value === die.letter) {
-		// 		this.priorIndex = i;
-		// 		return Object.assign(die, {active: true});
-		// 	}
-		// 	return die;
-		// });
+
+  // getCurrentIndeces(value) {
+  //   let indeces = [];
+  //   this.justLetters.forEach((letter, i) => {
+  //     if (value === letter) {
+  //       indeces.push(i);
+  //     }
+  //   });
+  //   return indeces;
   // }
-  getCurrentIndeces(value) {
-    let indeces = [];
-    this.justLetters.forEach((letter, i) => {
-      if (value === letter) {
-        indeces.push(i);
-      }
-    });
-    return indeces;
-  }
 
-  checkNeighborsOfLetter(letter) {
-
-  }
-  // PROBLEM IS CURRENTINDECES CAN HOLD 2 INDEXES, MUST CHECK FOR BOTH! NOT JUST ONE!
-  // HOW TO UNHIGHLIGHT ON BACKSPACE?! Maybe just make a userPassingWord value, any letter in there is highlighted, or even
-  // fill it with indeces to highlight
   processInput(value) {
     const userInput = this.userInput = value.toUpperCase();
-    const currentLetter = userInput[userInput.length - 1];
-    const currentIndeces = this.getCurrentIndeces(currentLetter);
-    if (this.justLetters.includes(currentLetter)) {
-      if (userInput.length === 1) {
-        this.validWordIndeces = [...currentIndeces];
-        return;
+    const currentLetters = userInput.split('');
+    this.activeBoard = this.activeBoard.map((letterObj) => {
+      if (currentLetters.includes(letterObj.letter)) {
+        return Object.assign({}, letterObj, {active: true});
+      } else {
+        return Object.assign({}, letterObj, {active: false});
       }
-      console.log(currentIndeces);
-      if (currentIndeces.length === 1) {
-
-        let newValidIndeces = [];
-        this.validWordIndeces.forEach((boardIndex, ind) => {
-          if (this.activeBoard[boardIndex].includes(currentIndeces[0])) {
-            newValidIndeces.push(currentIndeces[0]);
-          }
-          else {
-            this.validWordIndeces.splice(ind, 1);
-          }
-        });
-        this.validWordIndeces = [...validWordIndeces, ...newValidIndeces];
-      }
-    }
-		// if (this.justLetters.includes(currentLetter)) {
-     //  const currentIndeces = this.getCurrentIndex(currentLetter);
-		// 	if (userInput.length === 1) {
-     //    this.setLetterActive(currentLetter);
-     //    return;
-		// 	}
-		// 	if (this.activeBoard[this.priorIndex].neighbors.includes(currentIndeces)) {
-     //    this.setLetterActive(currentLetter);
-     //    return;
-     //  }
-		// }
-
-    // press letter, if it is the first letter, give it active
-    // if it is second or higher, check if it's index is in the neighbor array of prior element
-    //
+    });
   }
 }
 
