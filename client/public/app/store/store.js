@@ -66,9 +66,9 @@ class BoggleStore {
     return isNeighbor;
   }
 
-  processInput(value, backspace = false) {
-    console.log(backspace);
-    const userInput = this.userInput = value.toUpperCase();
+  //make two diff functions, one for just changing input (onChange)
+  //other is for the work of processing higlighting and stuff (onKeyUp)
+  buildWord(value, backspace = false) {
     const currentLetter = userInput[userInput.length - 1];
     const currentIndeces = this.getCurrentIndeces(currentLetter);
     let newNeighbors = [];
@@ -90,6 +90,9 @@ class BoggleStore {
       }
     });
     this.priorNeighbors = newNeighbors;
+  }
+  processInput(value) {
+    this.userInput = value.toUpperCase();
   }
 }
 
