@@ -10,30 +10,26 @@ class BoggleStore {
 			['E', 'Z', 'A', 'V', 'N', 'D'],['R', 'A', 'L', 'E', 'S', 'C'],['U', 'W', 'I', 'L', 'R', 'G'],['P', 'A', 'C', 'E', 'M', 'D']
 			];
     this.justLetters = [];
+    this.priorNeighbors = [];
 	}
 
   @observable activeBoard = [];
   @observable userInput = '';
-  @observable priorIndex = null;
+  @observable priorNeighbors = null;
   @observable validWordIndeces = [];
-  rollTheDice() {
-    let numDice = 15;
-    let usedIndeces = [];
-    let rolledDice = [];
-    while (numDice >= 0) {
-      let randIndex;
-      do {
-        randIndex = getRandom(0, 15);
-      }
-      while (usedIndeces.includes(randIndex));
-      rolledDice.push(this.possibleDice[randIndex]);
-      usedIndeces.push(randIndex);
-      numDice--;
+  rollTheDice(dice) {
+    let j = 0,
+        temp = null;
+    for (let i = 0; i < dice.length; i++) {
+      j = getRandom(0, 15);
+      temp = dice[i];
+      dice[i] = dice[j];
+      dice[j] = temp
     }
-    return rolledDice;
+    return dice;
   }
   getActiveBoard() {
-  	this.activeBoard = this.rollTheDice().map((die, i) => {
+  	this.activeBoard = this.rollTheDice(this.possibleDice).map((die, i) => {
       const letter = die[getRandom(0, 6)];
   		let neighbors = [i-5, i-4, i-3, i-1, i+1, i+3, i+4, i+5].filter((i) => (i >=0 && i <= 15));
 	  	if (i % 4 === 0) {
@@ -47,26 +43,53 @@ class BoggleStore {
   	})
   }
 
-  // getCurrentIndeces(value) {
-  //   let indeces = [];
-  //   this.justLetters.forEach((letter, i) => {
-  //     if (value === letter) {
-  //       indeces.push(i);
-  //     }
-  //   });
-  //   return indeces;
-  // }
-
-  processInput(value) {
-    const userInput = this.userInput = value.toUpperCase();
-    const currentLetters = userInput.split('');
-    this.activeBoard = this.activeBoard.map((letterObj) => {
-      if (currentLetters.includes(letterObj.letter)) {
-        return Object.assign({}, letterObj, {active: true});
-      } else {
-        return Object.assign({}, letterObj, {active: false});
+  getCurrentIndeces(value) {
+    let indeces = [];
+    this.justLetters.forEach((letter, i) => {
+      if (value === letter) {
+        indeces.push(i);
       }
     });
+    return indeces;
+  }
+
+  checkIfNeighbors(index, priorNeighbors = this.priorNeighbors) {
+    let isNeighbor = false;
+    priorNeighbors.forEach(neighborObj => {
+      if (neighborObj.neighbors.includes(index)) {
+        isNeighbor = true;
+      }
+      else if (!neighborObj.neighbors.includes(index) && !this.validWordIndeces.includes(neighborObj.boardIndex)) {
+        this.activeBoard[neighborObj.boardIndex].active = false;
+      }
+    });
+    return isNeighbor;
+  }
+
+  processInput(value, backspace = false) {
+    console.log(backspace);
+    const userInput = this.userInput = value.toUpperCase();
+    const currentLetter = userInput[userInput.length - 1];
+    const currentIndeces = this.getCurrentIndeces(currentLetter);
+    let newNeighbors = [];
+
+    if (backspace) {
+      this.validWordIndeces.pop();
+      currentIndeces.forEach((index) => {
+        this.activeBoard[index].active = false;
+      });
+      this.processInput(userInput.slice(0, userInput.length-1));
+    }
+
+    currentIndeces.forEach((ind) => {
+      const neighbors = this.activeBoard[ind].neighbors;
+      newNeighbors = [...newNeighbors, {boardIndex: ind, neighbors}];
+      if (userInput.length === 1 || this.checkIfNeighbors(ind)) {
+        this.activeBoard[ind].active = true;
+        this.validWordIndeces.push(ind);
+      }
+    });
+    this.priorNeighbors = newNeighbors;
   }
 }
 

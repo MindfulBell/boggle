@@ -19,8 +19,8 @@ const config = {
 				exclude: /node_modules/,
 				loader: 'babel-loader',
 				query: {
-					presets: ['react', 'es2015', 'react-hmre'],
-					plugins: ["transform-decorators-legacy", "transform-class-properties"]
+          presets: ['react', 'es2015', 'react-hmre'],
+          plugins: ["transform-decorators-legacy", "transform-class-properties", "syntax-object-rest-spread", "transform-object-rest-spread"]
 				}
 			},
 			{
